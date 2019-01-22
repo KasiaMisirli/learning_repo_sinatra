@@ -1,0 +1,41 @@
+{
+  "ratingQuestions": [
+    {
+      "title": "Is drinking water the best thing ever?",
+      "id": 1,
+      "link": "https://www.healthline.com/nutrition/7-health-benefits-of-water",
+      "answer": "Strongly Disagree"
+    },
+    {
+      "title": "gggggg",
+      "id": 2,
+      "link": "https://www.confused.com/on-the-road/cost-of-motoring/women-really-are-safer-drivers",
+      "answer": "Disagree"
+    },
+    {
+      "title": "dsfhsd",
+      "id": 3,
+      "link": "sdrhdt"
+    },
+    {
+      "title": "dsfhd",
+      "id": 4,
+      "link": "sdrthjdt"
+    },
+    {
+      "title": "dafhad",
+      "id": 5,
+      "link": "rgarh"
+    },
+    {
+      "title": "sfgdb",
+      "id": 6,
+      "link": "dfbr"
+    },
+    {
+      "title": "ccc",
+      "id": 7,
+      "link": "cccc"
+    }
+  ]
+}
