@@ -32,9 +32,10 @@ post '/ratingQuestions' do
   question = {
     "title": json_params["title"],
     "link": json_params["link"],
-    # "id": rating_questions.any? ? rating_questions.last["id"]+ 1 : 1
+    "id": rating_questions.any? ? rating_questions.last["id"]+1 : 1
     
   }
+  binding.pry
   updated_data = rating_questions.push(question)
   File.open("db.json", 'w') do |file|
     file.write(JSON.pretty_generate({ratingQuestions: updated_data}) )
@@ -45,7 +46,6 @@ end
 delete '/ratingQuestions/:id' do
   this_id = params[:id]
   data = rating_questions.each_with_index { |q, i| rating_questions.delete_at(i) if q["id"] == this_id.to_i }
-  binding.pry
   File.open("db.json", 'w') do |file|
     file.write(JSON.pretty_generate({ratingQuestions: data}) )
   end
