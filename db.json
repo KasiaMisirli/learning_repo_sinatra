@@ -1,15 +1,14 @@
 {
   "ratingQuestions": [
     {
-      "title": "Women are bad drivers?",
-      "id": 1,
-      "link": "https://www.confused.com/on-the-road/cost-of-motoring/women-really-are-safer-drivers",
-      "answer": "Strongly Agree"
+      "title": "Winter is the best",
+      "link": "www",
+      "id": 2
     },
     {
-      "title": "Is drinking water good?",
-      "link": "22",
-      "id": 2
+      "title": "Summer is the best",
+      "link": "www",
+      "id": 3
     }
   ]
 }
