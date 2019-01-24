@@ -26,7 +26,9 @@ end
 
 get '/ratingQuestions/:id' do
   this_id = params[:id]
-  rating_questions[this_id.to_i].to_json
+  single = []
+  rating_questions.each_with_index { |q, i| single.push(q.to_json) if q["id"] == this_id.to_i }
+  single
 end
 
 post '/ratingQuestions' do
