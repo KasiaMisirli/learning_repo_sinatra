@@ -8,7 +8,7 @@ require 'json'
 rating_questions = []
 
 before do
-  response.headers["Access-Control-Allow-Methods"] = "GET", "POST", "PUT", "DELETE", "OPTIONS"
+  response.headers["Access-Control-Allow-Methods"] = "GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"
   response.headers["Access-Control-Allow-Headers"] = "Authorization", "Content-Type", "Accept", "X-User-Email", "X-Auth-Token"
   response.headers['Access-Control-Allow-Origin'] = "*"
   content_type :json
@@ -58,6 +58,17 @@ put '/ratingQuestions/:id' do
   this_id = params[:id]
   json_params = JSON.parse(request.body.read)
   rating_questions.each_with_index { |q,i| q["title"] = json_params["title"] if q["id"] == this_id.to_i}
+  File.open("db.json", 'w') do |file|
+    file.write(JSON.pretty_generate({ratingQuestions: rating_questions}) )
+  end
+  response.status = 200
+  response
+end
+
+patch '/ratingQuestions/:id' do
+  this_id = params[:id]
+  json_params = JSON.parse(request.body.read)
+  rating_questions.each_with_index { |q,i| q["answer"] = json_params["answer"] if q["id"] == this_id.to_i}
   File.open("db.json", 'w') do |file|
     file.write(JSON.pretty_generate({ratingQuestions: rating_questions}) )
   end
