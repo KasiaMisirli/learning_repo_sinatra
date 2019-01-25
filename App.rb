@@ -32,6 +32,11 @@ get '/ratingQuestions/:id' do
 end
 
 post '/ratingQuestions' do
+  error = {"errors"=>{"title"=>["cannot be blank"]}}
+  # return send_response(response, 400, error) if request.body.size.zero?
+  if request.body.size.zero?
+    return 400
+  end
   json_params = JSON.parse(request.body.read)
   question = {
     "title": json_params["title"],
@@ -39,11 +44,20 @@ post '/ratingQuestions' do
     "id": rating_questions.any? ? rating_questions.last["id"]+1 : 1
     
   }
+  if question[:title] == '' 
+    response.body = error.to_json
+    response.status = 422 
+    return response
+  end
+  question.merge!(json_params) 
+  # ask Ryan
   updated_data = rating_questions.push(question)
   File.open("db.json", 'w') do |file|
     file.write(JSON.pretty_generate({ratingQuestions: updated_data}) )
   end
-  204
+  response.status = 201
+  response.body = question.to_json
+  response
 end
 
 delete '/ratingQuestions/:id' do
@@ -53,6 +67,7 @@ delete '/ratingQuestions/:id' do
     file.write(JSON.pretty_generate({ratingQuestions: rating_questions}) )
   end
   response.status = 200
+  response.body = rating_questions.to_json
   response
 end
 
