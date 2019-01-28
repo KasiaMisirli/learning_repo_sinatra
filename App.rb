@@ -28,6 +28,13 @@ get '/ratingQuestions/:id' do
   this_id = params[:id]
   single = []
   rating_questions.each_with_index { |q, i| single.push(q.to_json) if q["id"] == this_id.to_i }
+  if single == [] 
+    return response.status = 404
+  end
+  
+  if single 
+    response.status = 200
+  end
   single
 end
 
@@ -61,6 +68,10 @@ post '/ratingQuestions' do
 end
 
 delete '/ratingQuestions/:id' do
+  if request.body.size.zero?
+    response.status = 204
+    return response
+  end
   this_id = params[:id]
   rating_questions.each_with_index { |q, i| rating_questions.delete_at(i) if q["id"] == this_id.to_i }
   File.open("db.json", 'w') do |file|
@@ -75,10 +86,14 @@ put '/ratingQuestions/:id' do
   this_id = params[:id]
   json_params = JSON.parse(request.body.read)
   rating_questions.each_with_index { |q,i| q["title"] = json_params["title"] if q["id"] == this_id.to_i}
+  # if json_params["title"] == nil || undefined
+  #   return response.status = 404
+  # end
   File.open("db.json", 'w') do |file|
     file.write(JSON.pretty_generate({ratingQuestions: rating_questions}) )
   end
   response.status = 200
+  response.body = rating_questions.to_json
   response
 end
 
