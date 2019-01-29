@@ -8,17 +8,23 @@ require 'json'
 rating_questions = []
 
 before do
-  response.headers["Access-Control-Allow-Methods"] = "GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"
+  response.headers["Access-Control-Allow-Methods"] = "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
   response.headers["Access-Control-Allow-Headers"] = "Authorization", "Content-Type", "Accept", "X-User-Email", "X-Auth-Token"
-  response.headers['Access-Control-Allow-Origin'] = "*"
+  response.headers['Access-Control-Allow-Origin'] = "http://localhost:3000"
   content_type :json
   rating_questions = JSON.parse(File.read('db.json'))['ratingQuestions']
 
 end
-options "*" do
+# * means any route
+options "*" do 
   200
 end
 
+# def return_response(response, status, body)
+#   response.status = status
+#   response.body = body.To_json
+#   response
+# end
 
 get '/ratingQuestions' do
   rating_questions.to_json
@@ -40,7 +46,6 @@ end
 
 post '/ratingQuestions' do
   error = {"errors"=>{"title"=>["cannot be blank"]}}
-  # return send_response(response, 400, error) if request.body.size.zero?
   if request.body.size.zero?
     return 400
   end
@@ -68,42 +73,59 @@ post '/ratingQuestions' do
 end
 
 delete '/ratingQuestions/:id' do
-  if request.body.size.zero?
-    response.status = 204
+  this_id = params[:id]
+  single = rating_questions.find { |q| q["id"] == this_id.to_i }
+  if !single
+    response.status = 404
+    response.body = single.to_json
     return response
   end
-  this_id = params[:id]
-  rating_questions.each_with_index { |q, i| rating_questions.delete_at(i) if q["id"] == this_id.to_i }
+  rating_questions.delete(single)
   File.open("db.json", 'w') do |file|
     file.write(JSON.pretty_generate({ratingQuestions: rating_questions}) )
   end
-  response.status = 200
+  #  must return 204 because we are not expacting any answer
+  response.status = 204 
   response.body = rating_questions.to_json
   response
 end
 
 put '/ratingQuestions/:id' do
+  if request.body.size.zero?
+    return 404
+  end
   this_id = params[:id]
   json_params = JSON.parse(request.body.read)
-  rating_questions.each_with_index { |q,i| q["title"] = json_params["title"] if q["id"] == this_id.to_i}
-  # if json_params["title"] == nil || undefined
-  #   return response.status = 404
-  # end
+
+  single = rating_questions.find { |q| q["id"] == this_id.to_i }
+  single["title"] = json_params["title"]
   File.open("db.json", 'w') do |file|
     file.write(JSON.pretty_generate({ratingQuestions: rating_questions}) )
   end
   response.status = 200
-  response.body = rating_questions.to_json
+  response.body = single.to_json
   response
 end
 
 patch '/ratingQuestions/:id' do
+  if request.body.size.zero? 
+    response.status = 404
+    response.body = {}.to_json
+    return response
+  end  
   this_id = params[:id]
   json_params = JSON.parse(request.body.read)
-  rating_questions.each_with_index { |q,i| q["answer"] = json_params["answer"] if q["id"] == this_id.to_i}
+  single = rating_questions.find { |q| q["id"] == this_id.to_i }
+  if !single
+    response.status = 404
+    response.body = {}.to_json
+    return response
+  end 
+  single.merge!(json_params)
   File.open("db.json", 'w') do |file|
     file.write(JSON.pretty_generate({ratingQuestions: rating_questions}) )
   end
   response.status = 200
+  response.body = single.to_json
   response
 end
